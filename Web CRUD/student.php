@@ -68,7 +68,7 @@ require_once('backend/db_connection.php');
 <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="addPersonModalLabel">Add New Instructor</h5>
+            <h5 class="modal-title" id="addPersonModalLabel">Add New Student</h5>
         </div>
         <div class="modal-body">
             <form id="addPersonForm" method="POST" action="backend/add_student.php">

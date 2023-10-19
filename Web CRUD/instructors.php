@@ -133,7 +133,6 @@ $(document).ready(function() {
                 <td>icons operations</td>
                 <td> 
                     <a href="./viewsub.php?ins_id=' . $ins_id . '" class="btn btn-primary"><i class="far fa-eye"></i> View Subjects</a>
-                    <button type="button" class="btn btn-warning"><i class="fas fa-edit"></i> View Students</button>
                 </td>
             </tr>';
         }

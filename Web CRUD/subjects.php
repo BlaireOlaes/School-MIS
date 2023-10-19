@@ -10,9 +10,8 @@ require_once('backend/db_connection.php');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subjects</title>
     <link rel="stylesheet" href="./css/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
@@ -31,7 +30,7 @@ require_once('backend/db_connection.php');
                 <span class="label label-default">MIS</span>
             </h6>
 
-            <!-- Navigation Links -->
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto ">
                     <li class="nav-item ">
@@ -44,7 +43,7 @@ require_once('backend/db_connection.php');
                         <a class="nav-link " href="./instructors.php">Instructors</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link " href="./student.php">Students</a>
+                        <a class="nav-link" href="./student.php">Students</a>
                     </li>
                 </ul>
             </div>
@@ -58,73 +57,157 @@ require_once('backend/db_connection.php');
     <?php
     $sql = "SELECT * FROM subject";
     $result = $conn->query($sql);
+    ?>
 
-    echo '
     <div class="container">
-    <button class="btn btn-success" id="addButton">Add New Subject</button>
-</div>
+        <button class="btn btn-success" id="addButton">Add New Subject</button>
+    </div>
 
-<div class="modal fade" id="addPersonModal" tabindex="-1" role="dialog" aria-labelledby="addPersonModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="addPersonModalLabel">Add New Subject</h5>
+    <div class="modal fade" id="addPersonModal" tabindex="-1" role="dialog" aria-labelledby="addPersonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPersonModalLabel">Add New Subject</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="addPersonForm" method="POST" action="backend/add_subject.php">
+                        <div class="form-group">
+                            <label for="sub_code">Subject Code:</label>
+                            <input type="text" class="form-control" id="sub_code" name="sub_code" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sub_name">Subject Name:</label>
+                            <input type="text" class="form-control" id="sub_name" name="sub_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sub_unit">Unit:</label>
+                            <input type="text" class="form-control" id="sub_unit" name="sub_unit">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" name="submit" class="btn btn-success">SAVE</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">CANCEL</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-            <form id="addPersonForm" method="POST" action="backend/add_subject.php">
-                <div class="form-group">
-                    <label for="subcode">Subject Code:</label>
-                    <input type="text" class="form-control" id="sub_code" name="sub_code" required>
+    </div>
+
+    <div class="modal fade" id="editPersonModal" tabindex="-1" role="dialog" aria-labelledby="editPersonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPersonModalLabel">Edit Subject</h5>
                 </div>
-                <div class="form-group">
-                    <label for="subname">Subject Name:</label>
-                    <input type="text" class="form-control" id="sub_name" name="sub_name" required>
+                <div class="modal-body">
+                    <form id="editPersonForm" method="POST" action="backend/edit_subject.php">
+                        <div class="form-group">
+                            <label for="edit_sub_code">Subject Code:</label>
+                            <input type="text" class="form-control" id="edit_sub_code" name="edit_sub_code" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_sub_name">Subject Name:</label>
+                            <input type="text" class="form-control" id="edit_sub_name" name="edit_sub_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_sub_unit">Unit:</label>
+                            <input type="text" class="form-control" id="edit_sub_unit" name="edit_sub_unit">
+                        </div>
+                        <input type="hidden" id="edit_sub_id" name="edit_sub_id">
+                        <div class="modal-footer">
+                            <button type="submit" name="submit" class="btn btn-success">SAVE</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">CANCEL</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label for="subunit">Unit:</label>
-                    <input type="text" class="form-control" id="sub_unit" name="sub_unit">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog"
+        aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this subject?</p>
                 </div>
                 <div class="modal-footer">
-        <button type="submit" name="submit" class="btn btn-success">SAVE</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">CANCEL</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
+                </div>
+            </div>
         </div>
-            </form>
-        </div>
-        
     </div>
-</div>
-</div>
+
+
+    <script>
+        $(document).ready(function () {
+            $("#addButton").click(function () {
+                $("#addPersonModal").modal("show");
+            });
+
+            $(".edit-button").click(function () {
+                var subId = $(this).data("sub-id");
+                var subCode = $(this).closest("tr").find("th").text();
+                var subName = $(this).closest("tr").find("td:eq(0)").text();
+                var subUnit = $(this).closest("tr").find("td:eq(1)").text();
+
+                $("#edit_sub_id").val(subId);
+                $("#edit_sub_code").val(subCode);
+                $("#edit_sub_name").val(subName);
+                $("#edit_sub_unit").val(subUnit);
+                $("#editPersonModal").modal("show");
+            });
+
+            $(".delete-button").click(function () {
+                var subId = $(this).data("sub-id");
+
+                // Open the Bootstrap confirmation modal
+                $("#deleteConfirmationModal").modal("show");
+
+                // Set data attribute in the modal for subject ID
+                $("#deleteConfirmationModal").data("sub-id", subId);
+            });
+
+            $("#confirmDeleteButton").click(function () {
+                var subId = $("#deleteConfirmationModal").data("sub-id");
+
+                // Send an AJAX request to delete the subject
+                $.ajax({
+                    url: "backend/delete_subject.php",
+                    method: "POST",
+                    data: { sub_id: subId },
+                    success: function (data) {
+                        // Reload the page after successful deletion
+                        location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle errors, e.g., display an error message
+                        console.error("Error: " + error);
+                    }
+                });
+
+                // Close the Bootstrap confirmation modal
+                $("#deleteConfirmationModal").modal("hide");
+            });
+        });
 
 
 
 
 
+    </script>
 
-
-
-
-
-
-
-<script>
-$(document).ready(function() {
-    $("#addButton").click(function() {
-        $("#addPersonModal").modal("show");
-    });
-});
-
-$(document).on("click", "#delete-users", function(){
-    var id = $(this).data("id");
-    $(this).addClass("hide");
-    $(".delete-submit")
-});
-
-
-</script>
-
-';
-
-
+    <?php
 
     if ($result->num_rows > 0) {
         echo '<div class="container">
@@ -143,6 +226,7 @@ $(document).on("click", "#delete-users", function(){
             $sub_code = $row['sub_code'];
             $sub_name = $row['sub_name'];
             $sub_unit = $row['sub_unit'];
+            $sub_id = $row['sub_id'];
 
             echo '
             <tr>
@@ -150,15 +234,10 @@ $(document).on("click", "#delete-users", function(){
                 <td>' . $sub_name . '</td>
                 <td>' . $sub_unit . '</td>
                 <td>
-                <button class="btn btn-success" id="editButton">Edit</button>
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal' .$sub_code . '">Delete</button>
+                <button class="btn btn-success edit-button" data-sub-id="' . $sub_id . '">Edit</button>
+                <button class="btn btn-danger delete-button" data-sub-id="' . $sub_id . '">Delete</button>
                 </td>
-            </tr>
-            
-            
-            
-            
-            ';
+            </tr>';
         }
 
         echo '</tbody>

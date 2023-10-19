@@ -10,10 +10,8 @@ require_once('backend/db_connection.php');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subjects</title>
     <link rel="stylesheet" href="./css/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
@@ -62,99 +60,131 @@ require_once('backend/db_connection.php');
 
     $sql = "SELECT * FROM assignedstu WHERE ins_subcode='$ins_subcode'";
     $result = $conn->query($sql);
+    ?>
 
-    echo '
     <div class="container">
-    <button class="btn btn-success" id="addButton">Add New Student</button>
-    <h1>' . $ins_subcode . '</h1>
-</div>
-
-<div class="modal fade" id="addPersonModal" tabindex="-1" role="dialog" aria-labelledby="addPersonModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="addPersonModalLabel">Add New Instructor</h5>
-        </div>
-        
-        <div class="modal-body">
-            <form id="addPersonForm" method="POST" action="backend/add_newstu.php?ins_subcode=' . $ins_subcode . '">
-
-            <div class="form-group">
-            <label for="code">First Name:</label>
-            <input type="text" class="form-control" id="stu_fname" name="stu_fname" required>
-        </div>
-        <div class="form-group">
-            <label for="sub">Last Name:</label>
-            <input type="text" class="form-control" id="stu_lname" name="stu_lname" required>
-        </div>
-
-        <div class="form-group">
-        <label for="sub">M.I:</label>
-        <input type="text" class="form-control" id="stu_mname" name="stu_mname" required>
+        <button class="btn btn-success" id="addButton">Add New Student</button>
+        <?php
+        echo "<h1>" . $ins_subcode . "</h1>"
+            ?>
     </div>
 
-<div class="form-group">    
-    <div class="row">
-        <div class="col-md-6">
-        <label for="schedule">Program:</label>
-            <select class="form-control" id="stu_program" name="stu_program" required>
-                <option value="Mth">Mth</option>
-                <option value="TF">TF</option>
-                <option value="W">W</option>
-                <option value="S">S</option>
-            </select>
-        </div>
-
-        <div class="col-md-6">
-        <label for="schedule">Year Level:</label>
-            <select class="form-control" id="stu_year" name="stu_year" required>
-            <option value="Mth">Mth</option>
-            <option value="TF">TF</option>
-            <option value="W">W</option>
-            <option value="S">S</option>
-            </select>
-        </div>
-        </div>
-        <div class="form-group">
-        <label for="sub">Grade:</label>
-        <input type="text" class="form-control" id="stu_grade" name="stu_grade" required>
-    </div>
-    </div>
-
-
-                <div class="modal-footer">
-                <button type="submit" name="submit" class="btn btn-success">SAVE</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">CANCEL</button>
+    <div class="modal fade" id="addPersonModal" tabindex="-1" role="dialog" aria-labelledby="addPersonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPersonModalLabel">Add Student to Subject</h5>
                 </div>
-            </form>
+
+                <div class="modal-body">
+                    <form id="addPersonForm" method="POST"
+                        action="backend/add_newstu.php?ins_subcode=<?php echo $ins_subcode ?>">
+
+
+                        <div class="form-group">
+                            <label for="code">Student ID:</label>
+                            <input type="text" class="form-control" id="stu_id" name="stu_id" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="code">First Name:</label>
+                            <input type="text" class="form-control" id="stu_fname" name="stu_fname" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="sub">Last Name:</label>
+                            <input type="text" class="form-control" id="stu_lname" name="stu_lname" required readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sub">M.I:</label>
+                            <input type="text" class="form-control" id="stu_mname" name="stu_mname" required readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="schedule">Program:</label>
+                                    <input class="form-control" id="stu_program" name="stu_program" required readonly>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="schedule">Year Level:</label>
+                                    <input class="form-control" id="stu_year" name="stu_year" required readonly>
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="sub">Grade:</label>
+                                <input type="text" class="form-control" id="stu_grade" name="stu_grade" required>
+                            </div>
+                        </div>
+
+
+                        <div class="modal-footer">
+                            <button type="submit" name="submit" class="btn btn-success">SAVE</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">CANCEL</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-</div>
 
 
-<script>
+    <script>
 
-$(document).ready(function () {
-    $("#addButton").click(function () {
-        $("#addPersonModal").modal("show");
-    });
-});
+        $(document).ready(function () {
+            $("#addButton").click(function () {
+                $("#addPersonModal").modal("show");
+            });
+        });
 
-var previousPageURL = document.referrer;
-function goBackToPreviousPage() {
-    window.location.href = previousPageURL;
-}
-
-
-</script>
-';
+        var previousPageURL = document.referrer;
+        function goBackToPreviousPage() {
+            window.location.href = previousPageURL;
+        }
 
 
+        $(document).ready(function () {
+            // Listen for input events on the stu_id field
+            $('#stu_id').on('input', function () {
+                var studentId = $(this).val(); // Get the entered student ID
+
+                if (studentId) {
+                    // Send an AJAX request to fetch student information
+                    $.ajax({
+                        type: 'POST',
+                        url: 'backend/fetch_stu.php', // Replace with the correct backend endpoint
+                        data: { student_id: studentId }, // Send the student ID to the backend
+                        success: function (data) {
+                            // Parse the data as a JSON object (assuming it's JSON)
+                            var studentData = JSON.parse(data);
+
+                            // Update the first name, last name, and middle name fields
+                            $('#stu_fname').val(studentData.stu_fname);
+                            $('#stu_lname').val(studentData.stu_lname);
+                            $('#stu_mname').val(studentData.stu_mname);
+                            $('#stu_program').val(studentData.stu_program);
+                            $('#stu_year').val(studentData.stu_year);
+
+                        }
+                    });
+                } else {
+                    // Clear the first name, last name, and middle name fields when the student ID is empty
+                    $('#stu_fname').val('');
+                    $('#stu_lname').val('');
+                    $('#stu_mname').val('');
+                    $('#stu_program').val('');
+                    $('#stu_year').val('');
+                }
+            });
+        });
 
 
+    </script>
 
-
+    <?php
     if ($result->num_rows > 0) {
         echo '<div class="container">
             <div class="row">
