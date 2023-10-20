@@ -57,63 +57,146 @@ require_once('backend/db_connection.php');
     <?php
     $sql = "SELECT * FROM student";
     $result = $conn->query($sql);
+    ?>
 
-    echo '
     <div class="container">
-    <button class="btn btn-success" id="addButton">Add New Student</button>
-</div>
+        <button class="btn btn-success" id="addButton">Add New Student</button>
+    </div>
 
-<div class="modal fade" id="addPersonModal" tabindex="-1" role="dialog" aria-labelledby="addPersonModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="addPersonModalLabel">Add New Student</h5>
-        </div>
-        <div class="modal-body">
-            <form id="addPersonForm" method="POST" action="backend/add_student.php">
-                <div class="form-group">
-                    <label for="firstName">First Name:</label>
-                    <input type="text" class="form-control" id="stu_fname" name="stu_fname" required>
+    <div class="modal fade" id="addPersonModal" tabindex="-1" role="dialog" aria-labelledby="addPersonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPersonModalLabel">Add New Student</h5>
                 </div>
-                <div class="form-group">
-                    <label for="lastName">Last Name:</label>
-                    <input type="text" class="form-control" id="stu_lname" name="stu_lname" required>
+                <div class="modal-body">
+                    <form id="addPersonForm" method="POST" action="backend/add_student.php">
+                        <div class="form-group">
+                            <label for="firstName">First Name:</label>
+                            <input type="text" class="form-control" id="stu_fname" name="stu_fname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name:</label>
+                            <input type="text" class="form-control" id="stu_lname" name="stu_lname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="middleName">M.I:</label>
+                            <input type="text" class="form-control" id="stu_mname" name="stu_mname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="program">Program:</label>
+                            <input type="text" class="form-control" id="stu_program" name="stu_program" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="year">Year level:</label>
+                            <input type="text" class="form-control" id="stu_year" name="stu_year" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="year">Grade:</label>
+                            <input type="text" class="form-control" id="stu_grade" name="stu_grade">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" name="submit" class="btn btn-success">SAVE</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">CANCEL</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label for="middleName">M.I:</label>
-                    <input type="text" class="form-control" id="stu_mname" name="stu_mname" required>
-                </div>
-                <div class="form-group">
-                <label for="program">Program:</label>
-                <input type="text" class="form-control" id="stu_program" name="stu_program" required>
             </div>
-            <div class="form-group">
-                <label for="year">Year level:</label>
-                <input type="text" class="form-control" id="stu_year" name="stu_year" required>
-            </div>
-            <div class="form-group">
-            <label for="year">Grade:</label>
-            <input type="text" class="form-control" id="stu_grade" name="stu_grade">
-        </div>
-        <div class="modal-footer">
-        <button type="submit" name="submit" class="btn btn-success">SAVE</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">CANCEL</button>
-        </div>
-            </form>
         </div>
     </div>
-</div>
-</div>
 
-<script>
-$(document).ready(function() {
-    $("#addButton").click(function() {
-        $("#addPersonModal").modal("show");
-    });
-});
-</script>
 
-';
+
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog"
+        aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this subject?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog"
+        aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this subject?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        $(document).ready(function () {
+            $("#addButton").click(function () {
+                $("#addPersonModal").modal("show");
+            });
+
+
+            $(".delete-button").click(function () {
+                var subId = $(this).data("sub-id");
+
+                // Open the Bootstrap confirmation modal
+                $("#deleteConfirmationModal").modal("show");
+
+                // Set data attribute in the modal for subject ID
+                $("#deleteConfirmationModal").data("sub-id", subId);
+            });
+
+            $("#confirmDeleteButton").click(function () {
+                var subId = $("#deleteConfirmationModal").data("sub-id");
+
+                // Send an AJAX request to delete the subject
+                $.ajax({
+                    url: "backend/delete_student.php",
+                    method: "POST",
+                    data: { sub_id: subId },
+                    success: function (data) {
+                        // Reload the page after successful deletion
+                        location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle errors, e.g., display an error message
+                        console.error("Error: " + error);
+                    }
+                });
+
+                // Close the Bootstrap confirmation modal
+                $("#deleteConfirmationModal").modal("hide");
+            });
+        });
+
+
+    </script>
+
+    <?php
 
 
 
@@ -128,7 +211,6 @@ $(document).ready(function() {
                 <th scope="col">Program</th>
                 <th scope="col">Year Level</th>
                 <th scope="col">Operation</th>
-                <th scope="col">Actions</th>
             </thead>
             <tbody>';
 
@@ -147,10 +229,7 @@ $(document).ready(function() {
                 <td>' . $stu_fname . ' ' . $stu_mname . '. ' . $stu_lname . '</td>
                 <td>' . $stu_program . '</td>
                 <td>' . $stu_year . '</td>
-                <td>icons operations</td>
-                <td> 
-                <a type="button" href="" class="btn btn-primary"><i class="far fa-eye"></i> View Subjects</a>
-            </td>
+                <td>   <button class="btn btn-danger delete-button" data-sub-id="' . $stu_id . '">Delete</button></td>    
             </tr>';
         }
 
