@@ -54,14 +54,18 @@ require_once('backend/db_connection.php');
         alt="Bootstrap" width="30" height="24">
     <a class="label label-default" href="instructors.php">Instructors</a> <span> > Subjects</span>
 
-    <?php
-    $ins_id = $_GET['ins_id'];
-    $sql = "SELECT * FROM assignedsub WHERE ins_id = $ins_id";
-    $result = $conn->query($sql);
+    <?php if (isset($_GET['ins_id']) && is_numeric($_GET['ins_id'])) {
+        $ins_id = (int) $_GET['ins_id'];
 
-    $sql_sub = "SELECT sub_code FROM subject";
-    $result_sub = $conn->query($sql_sub);
 
+        $sql = "SELECT * FROM assignedsub WHERE ins_id = $ins_id";
+        $result = $conn->query($sql);
+
+        $sql_sub = "SELECT sub_code FROM subject";
+        $result_sub = $conn->query($sql_sub);
+    } else {
+
+    }
     ?>
     <div class="container">
         <button class="btn btn-success" id="addButton">Add New Subject</button>
@@ -130,10 +134,6 @@ require_once('backend/db_connection.php');
                             <label for="room">No. of Students:</label>
                             <input type="text" class="form-control" id="ins_snum" name="ins_snum" required>
                         </div>
-
-
-
-
                         <div class="modal-footer">
                             <button type="submit" name="submit" class="btn btn-success">SAVE</button>
                             <button type="button" class="btn btn-danger" data-dismiss="modal">CANCEL</button>
@@ -143,6 +143,92 @@ require_once('backend/db_connection.php');
             </div>
         </div>
     </div>
+
+
+
+
+    <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this record?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Record</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" method="POST" action="backend/edit_newsub.php">
+                        <input type="hidden" name="ins_id" value="<?php echo $ins_id; ?>">
+                        <input type="hidden" id="editInsSubcode" name="ins_subcode">
+                        <div class="form-group">
+                            <label for="ins_sname">Subject Name:</label>
+                            <input type="text" class="form-control" id="editInsSname" name="ins_sname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="schedule-day">Schedule Day:</label>
+                            <select class="form-control" id="editScheduleDay" name="ins_sday" required>
+                                <option value="MTh">MTh</option>
+                                <option value="TF">TF</option>
+                                <option value="W">W</option>
+                                <option value="S">S</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="schedule-time">Schedule Time:</label>
+                            <select class="form-control" id="editScheduleTime" name="ins_stime" required>
+                                <option value="7:30-9:00">7:30-9:00</option>
+                                <option value="9:00-10:30">9:00-10:30</option>
+                                <!-- Add options for other times -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ins_room">Room:</label>
+                            <input type="text" class="form-control" id="editInsRoom" name="ins_room" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ins_snum">No. of Students:</label>
+                            <input type="text" class="form-control" id="editInsSnum" name="ins_snum" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" name="submit" class="btn btn-success">SAVE</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">CANCEL</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
 
 
     <script>
@@ -195,6 +281,90 @@ require_once('backend/db_connection.php');
         });
 
 
+
+
+        $(document).ready(function () {
+            // Handle the delete button click
+            $(".delete-button").click(function () {
+                // Get the ins_subcode for the row
+                var ins_subcode = $(this).closest("tr").find("th").text();
+
+                // Store the ins_subcode in a data attribute of the confirmation modal
+                $("#confirmationModal").data("ins-subcode", ins_subcode);
+
+                // Show the confirmation modal
+                $("#confirmationModal").modal("show");
+            });
+
+            // Handle the confirmation modal delete button click
+            $("#confirmDelete").click(function () {
+                // Get the ins_subcode from the data attribute
+                var ins_subcode = $("#confirmationModal").data("ins-subcode");
+
+                // Send an AJAX request to delete the record
+                $.ajax({
+                    type: 'POST',
+                    url: 'backend/delete_newsub.php', // Replace with the actual URL to your delete script
+                    data: { ins_subcode: ins_subcode },
+                    success: function (response) {
+                        if (response === "success") {
+                            // Row deleted successfully, you can remove it from the table
+                            $("tr:contains(" + ins_subcode + ")").remove();
+                        } else {
+                            // Handle any error or display a message
+                            alert("Error deleting the record.");
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        // Handle errors here
+                        alert("Error: " + errorThrown);
+                    }
+                });
+
+                // Close the confirmation modal
+                $("#confirmationModal").modal("hide");
+            });
+        });
+
+
+        $(document).ready(function () {
+            // Handle the edit button click
+            $(".edit-button").click(function () {
+                // Get the values from the table row for editing
+                var row = $(this).closest("tr");
+                var ins_subcode = row.find("th").text();
+                var ins_sname = row.find("td:nth-child(2)").text();
+                var ins_sday_time = row.find("td:nth-child(3)").text().split(" | ");
+                var ins_day = ins_sday_time[0];
+                var ins_time = ins_sday_time[1];
+                var ins_room = row.find("td:nth-child(4)").text();
+                var ins_snum = row.find("td:nth-child(5)").text();
+
+                // Populate the edit modal with the data
+                $("#editInsSubcode").val(ins_subcode);
+                $("#editInsSname").val(ins_sname);
+                $("#editScheduleDay").val(ins_day);
+                $("#editScheduleTime").val(ins_time);
+                $("#editInsRoom").val(ins_room);
+                $("#editInsSnum").val(ins_snum);
+
+                // Show the edit modal
+                $("#editModal").modal("show");
+            });
+
+            // Handle the "Save Changes" button click in the edit modal
+            $("#saveEdit").click(function () {
+                // Add your code to handle saving the changes, such as an AJAX request.
+                // ...
+
+                // Close the edit modal
+                $("#editModal").modal("hide");
+            });
+        });
+
+
+
+
     </script>
     <?php
 
@@ -214,8 +384,8 @@ require_once('backend/db_connection.php');
                         <th scope="col">Schedule</th>
                         <th scope="col">Room</th>
                         <th scope="col">No. of Students</th>
-                        <th scope="col">Operations/th>
-                        <th scope="col">Actions/th>
+                        <th scope="col">Operations</th>
+                        <th scope="col">Actions</th>
                     </thead>
                     <tbody>';
 
@@ -234,7 +404,8 @@ require_once('backend/db_connection.php');
                             <td> ' . $ins_sda . ' | ' . $ins_stime . '</td>
                             <td> ' . $ins_room . '</td>
                             <td>' . $ins_snum . '</td>
-                            <td>icons operations</td>
+                            <td>  <button class="btn btn-success edit-button" data-sub-id="">Edit</button>
+                            <button class="btn btn-danger delete-button" data-sub-id="">Delete</button></td>
                             <td>
                                 <a href="./viewstu.php?ins_subcode=' . $ins_subcode . '" class="btn btn-primary"><i
                                         class="far fa-eye"></i> View Students</a>
