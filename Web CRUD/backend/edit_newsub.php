@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             WHERE ins_subcode = '$ins_subcode'  AND ins_id = '$ins_id'";
 
     if ($conn->query($sql) === TRUE) {
-        header("Location: ../viewsub.php?ins_id=" . $ins_id);
+        header("Location: ../viewsub.php?ins_id=" . $ins_id . "&ins_subcode=" . $ins_subcode);
         exit();
     } else {
         echo "Error updating the record: " . $conn->error;

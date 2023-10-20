@@ -57,10 +57,13 @@ require_once('backend/db_connection.php');
 
     <?php
     $ins_subcode = $_GET['ins_subcode'];
-
     $sql = "SELECT * FROM assignedstu WHERE ins_subcode='$ins_subcode'";
     $result = $conn->query($sql);
     ?>
+
+
+
+
 
     <div class="container">
         <button class="btn btn-success" id="addButton">Add New Student</button>
@@ -132,8 +135,70 @@ require_once('backend/db_connection.php');
     </div>
 
 
-    <script>
+    <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this student from the subject?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Student</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editStudentForm" method="POST" action="backend/edit_newstu.php">
+                        <input type="hidden" name="ins_subcode" value="<?php echo $ins_subcode; ?>">
+                        <input type="hidden" name="stu_id" id="editStuId">
+                        <div class="form-group">
+                            <label for="editStuProgram">Program:</label>
+                            <input type="text" class="form-control" id="editStuProgram" name="stu_program" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editStuYear">Year Level:</label>
+                            <input type="text" class="form-control" id="editStuYear" name="stu_year" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editStuGrade">Grade:</label>
+                            <input type="text" class="form-control" id="editStuGrade" name="stu_grade" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" name="submit" class="btn btn-success">SAVE</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <script>
         $(document).ready(function () {
             $("#addButton").click(function () {
                 $("#addPersonModal").modal("show");
@@ -141,37 +206,29 @@ require_once('backend/db_connection.php');
         });
 
         var previousPageURL = document.referrer;
+
         function goBackToPreviousPage() {
             window.location.href = previousPageURL;
         }
 
-
         $(document).ready(function () {
-            // Listen for input events on the stu_id field
             $('#stu_id').on('input', function () {
-                var studentId = $(this).val(); // Get the entered student ID
-
+                var studentId = $(this).val();
                 if (studentId) {
-                    // Send an AJAX request to fetch student information
                     $.ajax({
                         type: 'POST',
-                        url: 'backend/fetch_stu.php', // Replace with the correct backend endpoint
-                        data: { student_id: studentId }, // Send the student ID to the backend
+                        url: 'backend/fetch_stu.php',
+                        data: { student_id: studentId },
                         success: function (data) {
-                            // Parse the data as a JSON object (assuming it's JSON)
                             var studentData = JSON.parse(data);
-
-                            // Update the first name, last name, and middle name fields
                             $('#stu_fname').val(studentData.stu_fname);
                             $('#stu_lname').val(studentData.stu_lname);
                             $('#stu_mname').val(studentData.stu_mname);
                             $('#stu_program').val(studentData.stu_program);
                             $('#stu_year').val(studentData.stu_year);
-
                         }
                     });
                 } else {
-                    // Clear the first name, last name, and middle name fields when the student ID is empty
                     $('#stu_fname').val('');
                     $('#stu_lname').val('');
                     $('#stu_mname').val('');
@@ -180,6 +237,54 @@ require_once('backend/db_connection.php');
                 }
             });
         });
+
+        $(document).ready(function () {
+            $(".delete-button").click(function () {
+                var stu_id = $(this).closest("tr").find("th").text();
+                $("#confirmationModal").data("stu-id", stu_id);
+                $("#confirmationModal").modal("show");
+            });
+
+            $("#confirmDelete").click(function () {
+                var stu_id = $("#confirmationModal").data("stu-id");
+                $.ajax({
+                    type: 'POST',
+                    url: 'backend/delete_newstu.php',
+                    data: { stu_id: stu_id, ins_subcode: "<?php echo $ins_subcode; ?>" },
+                    success: function (response) {
+                        if (response === "success") {
+                            $("tr:contains(" + stu_id + ")").remove();
+                        } else {
+                            alert("Error deleting the student record.");
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert("Error: " + errorThrown);
+                    }
+                });
+                $("#confirmationModal").modal("hide");
+            });
+        });
+
+
+        $(document).ready(function () {
+            $(".edit-button").click(function () {
+                var stu_id = $(this).data("stu-id");
+                $("#editStuId").val(stu_id);
+
+                var stu_program = $(this).closest("tr").find("td:nth-child(3)").text();
+                var stu_year = $(this).closest("tr").find("td:nth-child(4)").text();
+                var stu_grade = $(this).closest("tr").find("td:nth-child(5)").text();
+
+                $("#editStuProgram").val(stu_program);
+                $("#editStuYear").val(stu_year);
+                $("#editStuGrade").val(stu_grade);
+
+                $("#editModal").modal("show");
+            });
+        });
+
+
 
 
     </script>
@@ -213,9 +318,11 @@ require_once('backend/db_connection.php');
                 <th scope="row">' . $stu_id . '</th>
                 <td>' . $stu_fname . ' ' . $stu_lname . '</td>
                 <td>' . $stu_program . '</td>
-                <td> ' . $stu_year . '</td>
-                <td> ' . $stu_grade . '</td>
-                <td>icons operations</td>
+                <td>' . $stu_year . '</td>
+                <td>' . $stu_grade . '</td>
+                <td> <button class="btn btn-success edit-button" data-stu-id="' . $stu_id . '">Edit</button>
+
+                <button class="btn btn-danger delete-button" data-sub-id="">Delete</button></td>
             </tr>';
         }
 
