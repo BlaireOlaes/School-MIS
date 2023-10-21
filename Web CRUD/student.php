@@ -153,6 +153,51 @@ require_once('backend/db_connection.php');
 
 
 
+    <div class="modal fade" id="editPersonModal" tabindex="-1" role="dialog" aria-labelledby="editPersonModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPersonModalLabel">Edit Student</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="editPersonForm" method="POST" action="backend/edit_student.php">
+                        <div class="form-group">
+                            <label for="edit_stu_fname">ID:</label>
+                            <input type="text" class="form-control" id="edit_stu_fname" name="edit_stu_fname" required
+                                readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_stu_name">Name:</label>
+                            <input type="text" class="form-control" id="edit_stu_name" name="edit_stu_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_stu_program">Program:</label>
+                            <input type="text" class="form-control" id="edit_stu_program" name="edit_stu_program"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_stu_year">Year level:</label>
+                            <input type="text" class="form-control" id="edit_stu_year" name="edit_stu_year" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_stu_grade">Grade:</label>
+                            <input type="text" class="form-control" id="edit_stu_grade" name="edit_stu_grade">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" name="submit" class="btn btn-success">SAVE</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">CANCEL</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
     <script>
         $(document).ready(function () {
             $("#addButton").click(function () {
@@ -162,36 +207,46 @@ require_once('backend/db_connection.php');
 
             $(".delete-button").click(function () {
                 var subId = $(this).data("sub-id");
-
-                // Open the Bootstrap confirmation modal
                 $("#deleteConfirmationModal").modal("show");
-
-                // Set data attribute in the modal for subject ID
                 $("#deleteConfirmationModal").data("sub-id", subId);
             });
 
             $("#confirmDeleteButton").click(function () {
                 var subId = $("#deleteConfirmationModal").data("sub-id");
-
-                // Send an AJAX request to delete the subject
                 $.ajax({
                     url: "backend/delete_student.php",
                     method: "POST",
                     data: { sub_id: subId },
                     success: function (data) {
-                        // Reload the page after successful deletion
                         location.reload();
                     },
                     error: function (xhr, status, error) {
-                        // Handle errors, e.g., display an error message
                         console.error("Error: " + error);
                     }
                 });
-
-                // Close the Bootstrap confirmation modal
                 $("#deleteConfirmationModal").modal("hide");
             });
+
+            $(".edit-button").click(function () {
+                var stu_id = $(this).data("stu_id");
+                var stu_fname = $(this).closest("tr").find("th").text();
+                var stu_name = $(this).closest("tr").find("td:eq(0)").text();
+                var stu_program = $(this).closest("tr").find("td:eq(1)").text();
+                var stu_year = $(this).closest("tr").find("td:eq(2)").text();
+
+                $("#edit_stu_fname").val(stu_fname);
+                $("#edit_stu_name").val(stu_name);
+                $("#edit_stu_program").val(stu_program);
+                $("#edit_stu_year").val(stu_year);
+                $("#editPersonModal").modal("show");
+            });
+
         });
+
+
+
+
+
 
 
     </script>
@@ -229,7 +284,9 @@ require_once('backend/db_connection.php');
                 <td>' . $stu_fname . ' ' . $stu_mname . '. ' . $stu_lname . '</td>
                 <td>' . $stu_program . '</td>
                 <td>' . $stu_year . '</td>
-                <td>   <button class="btn btn-danger delete-button" data-sub-id="' . $stu_id . '">Delete</button></td>    
+                <td>   
+                <button class="btn btn-success edit-button" data-sub-id="' . $stu_id . '">Edit</button>
+                <button class="btn btn-danger delete-button" data-sub-id="' . $stu_id . '">Delete</button></td>    
             </tr>';
         }
 
