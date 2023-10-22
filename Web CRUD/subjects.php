@@ -171,32 +171,26 @@ require_once('backend/db_connection.php');
             $(".delete-button").click(function () {
                 var subId = $(this).data("sub-id");
 
-                // Open the Bootstrap confirmation modal
                 $("#deleteConfirmationModal").modal("show");
 
-                // Set data attribute in the modal for subject ID
                 $("#deleteConfirmationModal").data("sub-id", subId);
             });
 
             $("#confirmDeleteButton").click(function () {
                 var subId = $("#deleteConfirmationModal").data("sub-id");
 
-                // Send an AJAX request to delete the subject
                 $.ajax({
                     url: "backend/delete_subject.php",
                     method: "POST",
                     data: { sub_id: subId },
                     success: function (data) {
-                        // Reload the page after successful deletion
                         location.reload();
                     },
                     error: function (xhr, status, error) {
-                        // Handle errors, e.g., display an error message
                         console.error("Error: " + error);
                     }
                 });
 
-                // Close the Bootstrap confirmation modal
                 $("#deleteConfirmationModal").modal("hide");
             });
         });

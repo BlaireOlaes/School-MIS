@@ -204,7 +204,6 @@ require_once('backend/db_connection.php');
                             <select class="form-control" id="editScheduleTime" name="ins_stime" required>
                                 <option value="7:30-9:00">7:30-9:00</option>
                                 <option value="9:00-10:30">9:00-10:30</option>
-                                <!-- Add options for other times -->
                             </select>
                         </div>
                         <div class="form-group">
@@ -284,53 +283,40 @@ require_once('backend/db_connection.php');
 
 
         $(document).ready(function () {
-            // Handle the delete button click
             $(".delete-button").click(function () {
-                // Get the ins_subcode for the row
                 var ins_subcode = $(this).closest("tr").find("th").text();
 
-                // Store the ins_subcode in a data attribute of the confirmation modal
                 $("#confirmationModal").data("ins-subcode", ins_subcode);
 
-                // Show the confirmation modal
                 $("#confirmationModal").modal("show");
             });
 
-            // Handle the confirmation modal delete button click
             $("#confirmDelete").click(function () {
-                // Get the ins_subcode from the data attribute
                 var ins_subcode = $("#confirmationModal").data("ins-subcode");
 
-                // Send an AJAX request to delete the record
                 $.ajax({
                     type: 'POST',
-                    url: 'backend/delete_newsub.php', // Replace with the actual URL to your delete script
+                    url: 'backend/delete_newsub.php', 
                     data: { ins_subcode: ins_subcode },
                     success: function (response) {
                         if (response === "success") {
-                            // Row deleted successfully, you can remove it from the table
                             $("tr:contains(" + ins_subcode + ")").remove();
                         } else {
-                            // Handle any error or display a message
                             alert("Error deleting the record.");
                         }
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        // Handle errors here
                         alert("Error: " + errorThrown);
                     }
                 });
 
-                // Close the confirmation modal
                 $("#confirmationModal").modal("hide");
             });
         });
 
 
         $(document).ready(function () {
-            // Handle the edit button click
             $(".edit-button").click(function () {
-                // Get the values from the table row for editing
                 var row = $(this).closest("tr");
                 var ins_subcode = row.find("th").text();
                 var ins_sname = row.find("td:nth-child(2)").text();
@@ -340,7 +326,6 @@ require_once('backend/db_connection.php');
                 var ins_room = row.find("td:nth-child(4)").text();
                 var ins_snum = row.find("td:nth-child(5)").text();
 
-                // Populate the edit modal with the data
                 $("#editInsSubcode").val(ins_subcode);
                 $("#editInsSname").val(ins_sname);
                 $("#editScheduleDay").val(ins_day);
@@ -348,16 +333,10 @@ require_once('backend/db_connection.php');
                 $("#editInsRoom").val(ins_room);
                 $("#editInsSnum").val(ins_snum);
 
-                // Show the edit modal
                 $("#editModal").modal("show");
             });
 
-            // Handle the "Save Changes" button click in the edit modal
             $("#saveEdit").click(function () {
-                // Add your code to handle saving the changes, such as an AJAX request.
-                // ...
-
-                // Close the edit modal
                 $("#editModal").modal("hide");
             });
         });

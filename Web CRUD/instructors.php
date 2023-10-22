@@ -30,7 +30,6 @@ require_once('backend/db_connection.php');
                 <span class="label label-default">MIS</span>
             </h6>
 
-            <!-- Navigation Links -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto ">
                     <li class="nav-item ">
@@ -177,32 +176,26 @@ require_once('backend/db_connection.php');
             $(".delete-button").click(function () {
                 var insId = $(this).data("ins-id");
 
-                // Open the Bootstrap confirmation modal
                 $("#deleteConfirmationModal").modal("show");
 
-                // Set data attribute in the modal for instructor ID
                 $("#deleteConfirmationModal").data("ins-id", insId);
             });
 
             $("#confirmDeleteButton").click(function () {
                 var insId = $("#deleteConfirmationModal").data("ins-id");
 
-                // Send an AJAX request to delete the instructor
                 $.ajax({
-                    url: "backend/delete_instructor.php", // Adjust the URL to your PHP file
+                    url: "backend/delete_instructor.php",
                     method: "POST",
-                    data: { delete_ins_id: insId }, // Adjust the parameter name if needed
+                    data: { delete_ins_id: insId },
                     success: function (data) {
-                        // Reload the page after successful deletion
                         location.reload();
                     },
                     error: function (xhr, status, error) {
-                        // Handle errors, e.g., display an error message
                         console.error("Error: " + error);
                     }
                 });
 
-                // Close the Bootstrap confirmation modal
                 $("#deleteConfirmationModal").modal("hide");
             });
 

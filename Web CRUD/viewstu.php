@@ -30,7 +30,6 @@ require_once('backend/db_connection.php');
                 <span class="label label-default">MIS</span>
             </h6>
 
-            <!-- Navigation Links -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto ">
                     <li class="nav-item ">

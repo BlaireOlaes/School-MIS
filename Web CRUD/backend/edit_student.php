@@ -1,36 +1,32 @@
 <?php
 require_once('db_connection.php');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['edit_stu_id'])) {
+    $stu_id = $_POST["edit_stu_id"];
+    $stu_fname = $_POST["edit_stu_fname"];
+    $stu_lname = $_POST["edit_stu_lname"];
+    $stu_mname = $_POST["edit_stu_mname"];
+    $stu_program = $_POST["edit_stu_program"];
+    $stu_year = $_POST["edit_stu_year"];
 
-    if (isset($_POST['edit_sub_id'])) {
 
-        $sub_id = $_POST['edit_sub_id'];
-        $sub_code = $_POST['edit_sub_code'];
-        $sub_name = $_POST['edit_sub_name'];
-        $sub_unit = $_POST['edit_sub_unit'];
-        $sql = "UPDATE subject SET sub_code = ?, sub_name = ?, sub_unit = ? WHERE sub_id = ?";
-        $stmt = $conn->prepare($sql);
+    $sql = "UPDATE student SET stu_fname= ?, stu_lname= ?, stu_mname= ?, stu_program= ?, stu_year= ? WHERE stu_id= ?";
+    $stmt = $conn->prepare($sql);
 
-        if ($stmt) {
-            $stmt->bind_param("ssii", $sub_code, $sub_name, $sub_unit, $sub_id);
+    if ($stmt) {
+        $stmt->bind_param("sssssi", $stu_fname, $stu_lname, $stu_mname, $stu_program, $stu_year, $stu_id);
 
-            if ($stmt->execute()) {
+        if ($stmt->execute()) {
 
-                header('Location: ../subjects.php');
-                exit();
-            } else {
-
-                echo "Error: " . $stmt->error;
-            }
-
-            $stmt->close();
+            header('Location: ../student.php'); 
         } else {
-
-            echo "Error: " . $conn->error;
+            echo "Error: " . $stmt->error;
         }
+
+        $stmt->close();
+    } else {
+        echo "Error: " . $conn->error;
     }
 } else {
-
 }
 ?>
