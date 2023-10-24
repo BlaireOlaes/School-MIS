@@ -240,6 +240,7 @@ require_once('backend/db_connection.php');
                 <th scope="col">Program</th>
                 <th scope="col">Year Level</th>
                 <th scope="col">Operation</th>
+                <th scope="col">Actions</th>
             </thead>
             <tbody>';
 
@@ -252,7 +253,6 @@ require_once('backend/db_connection.php');
             $stu_year = $row['stu_year'];
 
 
-
             echo '<tr>
                 <th scope="row">' . $stu_id . '</th>
                 <td>' . $stu_fname . ' ' . $stu_mname . '. ' . $stu_lname . '</td>
@@ -261,7 +261,12 @@ require_once('backend/db_connection.php');
                 <td>   
                 <button class="btn btn-success edit-button" data-stu-id="' . $stu_id . '" data-stu-fname="' . $stu_fname . '" data-stu-lname="' . $stu_lname . '" data-stu-mname="' . $stu_mname . '"data-stu-program="' . $stu_program . '"data-stu-year="' . $stu_year . '">Edit</button>
                 <button class="btn btn-danger delete-button" data-sub-id="' . $stu_id . '">Delete</button></td>    
-            </tr>';
+                <td>
+                <a href="./stusub.php?stu_id=' . $stu_id . '" class="btn btn-warning"><i
+                        class="far fa-eye"></i> View Subjects</a>
+            </td>
+            </tr>
+            ';
         }
 
         echo '</tbody>
