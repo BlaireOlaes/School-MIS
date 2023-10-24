@@ -17,7 +17,6 @@ if (isset($_POST['student_id'])) {
             'stu_year' => $row['stu_year'],
         ];
 
-        // Return the student data as JSON
         echo json_encode($studentData);
     }
 }

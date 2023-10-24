@@ -54,12 +54,12 @@ require_once('backend/db_connection.php');
         alt="Bootstrap" width="30" height="24">
     <a class="label label-default" href="instructors.php">Instructors</a> <span> > Subjects</span>
 
-    <?php if (isset($_GET['ins_id']) && is_numeric($_GET['ins_id'])) {
+    <?php if (isset($_GET['ins_id']) && ($_GET['ins_id'])) {
         $ins_id = (int) $_GET['ins_id'];
 
 
         $sql = "SELECT * FROM assignedsub WHERE ins_id = $ins_id";
-        $result = $conn->query($sql);
+        $result = $conn->query($sql);   
 
         $sql_sub = "SELECT sub_code FROM subject";
         $result_sub = $conn->query($sql_sub);

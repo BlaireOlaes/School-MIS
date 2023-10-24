@@ -300,7 +300,7 @@ require_once('backend/db_connection.php');
                 <th scope="col">Program</th>
                 <th scope="col">Year Level</th>
                 <th scope="col">Grade</th>
-                <th scope="col">Operations/th>
+                <th scope="col">Operations</th>
             </thead>
             <tbody>';
 
